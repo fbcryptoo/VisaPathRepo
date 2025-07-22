@@ -3,132 +3,140 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VisaPath - Do I Need a Visa?</title>
+  <title>VisaPath – Do I Need a Visa?</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f5f7fa;
+      font-family: Arial, sans-serif;
+      background-color: #f6f7fb;
       margin: 0;
-      padding: 2rem 1rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: #333;
-    }
-
-    h1 {
-      color: #1e60d1;
-      font-size: 2.2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    h2 {
-      font-size: 1.6rem;
-      margin-bottom: 1rem;
-    }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 2rem;
-      max-width: 500px;
-      width: 100%;
-      box-shadow: 0 0 20px rgba(0,0,0,0.08);
+      padding: 0;
       text-align: center;
     }
-
+    header {
+      background-color: #ffffff;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #1e6ef1;
+      font-size: 2em;
+      margin: 0;
+    }
+    .container {
+      max-width: 500px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    h2 {
+      font-size: 1.6em;
+      margin-bottom: 15px;
+      color: #222;
+    }
+    p {
+      font-size: 1em;
+      color: #555;
+      margin-bottom: 30px;
+    }
     select, button {
       width: 100%;
-      padding: 0.7rem;
-      margin: 0.5rem 0;
-      font-size: 1rem;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 1em;
+      border-radius: 8px;
       border: 1px solid #ccc;
-      border-radius: 6px;
     }
-
     button {
-      background-color: #1e60d1;
+      background-color: #1e6ef1;
       color: white;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s ease;
+      border: none;
     }
-
     button:hover {
-      background-color: #174fb5;
+      background-color: #155dd8;
     }
-
     #result {
-      margin-top: 2rem;
-      padding: 1rem;
-      background: #fff3cd;
-      border-left: 5px solid #ffecb5;
-      border-radius: 6px;
-      text-align: left;
-      word-break: break-word;
+      margin-top: 25px;
+      background-color: #fff7d9;
+      border-left: 4px solid #f2c037;
+      padding: 15px;
+      border-radius: 8px;
+      color: #333;
     }
-
     a {
-      color: #1e60d1;
-      text-decoration: underline;
+      color: #1e6ef1;
+      word-break: break-word;
     }
   </style>
 </head>
 <body>
-  <h1>VisaPath</h1>
-  <div class="card">
-    <h2>Do I need a visa?</h2>
-    <p>Use our smart visa checker to instantly find out visa requirements between any two countries—including e-visas, eTAs, ESTA, and visa-free entry.</p>
+  <header>
+    <h1>VisaPath</h1>
+  </header>
 
-    <select id="fromCountry"></select>
-    <select id="toCountry"></select>
+  <div class="container">
+    <h2>Do I need a visa?</h2>
+    <p>Use our smart visa checker to instantly find out visa requirements between any two countries—<br/>including e-visas, eTAs, ESTA, and visa-free entry.</p>
+
+    <select id="from"></select>
+    <select id="to"></select>
     <button onclick="checkVisa()">Check Visa Requirement</button>
-    
+
     <div id="result"></div>
   </div>
 
   <script>
-    let visaData = {};
+    let data = [];
 
-    function populateDropdowns(countries) {
-      const fromSelect = document.getElementById("fromCountry");
-      const toSelect = document.getElementById("toCountry");
+    async function loadData() {
+      const response = await fetch('combined_passport_data_with_guidance.csv');
+      const text = await response.text();
+      const rows = text.trim().split('\n').slice(1);
+      data = rows.map(row => {
+        const [from, to, requirement, guidance] = row.split(',');
+        return {
+          from: from.trim(),
+          to: to.trim(),
+          requirement: requirement.trim().toLowerCase(),
+          guidance: guidance ? guidance.trim() : ''
+        };
+      });
+
+      const countries = Array.from(new Set(data.flatMap(d => [d.from, d.to]))).sort();
+      const fromSelect = document.getElementById('from');
+      const toSelect = document.getElementById('to');
 
       countries.forEach(country => {
-        const opt1 = new Option(country, country);
-        const opt2 = new Option(country, country);
-        fromSelect.add(opt1);
-        toSelect.add(opt2);
+        const opt1 = document.createElement('option');
+        opt1.value = country;
+        opt1.textContent = country;
+        fromSelect.appendChild(opt1);
+
+        const opt2 = document.createElement('option');
+        opt2.value = country;
+        opt2.textContent = country;
+        toSelect.appendChild(opt2);
       });
     }
 
-    function parseCSV(text) {
-      const lines = text.trim().split('\n');
-      const headers = lines[0].split(',');
-      const map = {};
+    function checkVisa() {
+      const from = document.getElementById('from').value;
+      const to = document.getElementById('to').value;
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '';
 
-      for (let i = 1; i < lines.length; i++) {
-        const row = lines[i].split(',');
-        const from = row[0].trim();
-        const to = row[1].trim();
-        const requirement = row[2].trim().toLowerCase();
-        const guidance = row[3]?.trim();
-
-        if (!map[from]) map[from] = {};
-        map[from][to] = { requirement, guidance };
+      if (!from || !to) {
+        resultDiv.innerHTML = 'Please select both countries.';
+        return;
       }
 
-      return map;
-    }
-
-    function checkVisa() {
-      const from = document.getElementById("fromCountry").value;
-      const to = document.getElementById("toCountry").value;
-      const info = visaData[from]?.[to];
-      const resultDiv = document.getElementById("result");
+      const info = data.find(d => d.from === from && d.to === to);
 
       if (!info) {
-        resultDiv.innerHTML = `<strong>No visa data available from ${from} to ${to}.</strong>`;
+        resultDiv.innerHTML = `We couldn't find visa information for ${from} → ${to}.`;
         return;
       }
 
@@ -136,7 +144,7 @@
 
       switch (info.requirement) {
         case 'visa':
-          msg += `You need a visa to enter ${to}.`;
+          msg += `You’ll need to apply for a visa to travel from ${from} to ${to}.<br/><br/>Please check with the destination’s embassy or consulate for the most accurate application instructions.`;
           break;
         case 'visa_free':
           msg += `No visa required to enter ${to} — it's visa-free.`;
@@ -150,29 +158,14 @@
           msg += `Visa requirement: ${info.requirement}`;
       }
 
-      if (info.guidance && info.guidance.startsWith("http")) {
-        msg += `<br/><br/><a href="${info.guidance}" target="_blank">Apply here</a>`;
-      } else if (info.guidance) {
-        msg += `<br/><br/>${info.guidance}`;
+      if (info.guidance && info.guidance.startsWith('http')) {
+        msg += `<br/><br/><a href="${info.guidance}" target="_blank">Apply or learn more here</a>`;
       }
 
       resultDiv.innerHTML = msg;
     }
 
-    // Fetch CSV and initialize
-    fetch('combined_passport_data_with_guidance.csv')
-      .then(response => {
-        if (!response.ok) throw new Error("CSV not found");
-        return response.text();
-      })
-      .then(text => {
-        visaData = parseCSV(text);
-        const countries = Object.keys(visaData).sort();
-        populateDropdowns(countries);
-      })
-      .catch(error => {
-        document.getElementById("result").innerHTML = `Error loading data: ${error.message}`;
-      });
+    window.onload = loadData;
   </script>
 </body>
 </html>
