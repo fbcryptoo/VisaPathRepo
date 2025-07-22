@@ -1,45 +1,73 @@
-let visaInfo = {};
+async function fetchVisaData() {
+  const response = await fetch("https://raw.githubusercontent.com/fbcryptoo/VisaPathRepo/main/public/combined_passport_data_with_guidance.csv");
+  const csvText = await response.text();
+  const rows = csvText.trim().split('\n').slice(1); // skip header
 
-function loadVisaData() {
-  Papa.parse('combined_passport_data_with_guidance.csv', {
-    header: true,
-    download: true,
-    complete: function(results) {
-      const data = results.data;
-      data.forEach(row => {
-        const key = `${row.Passport}-${row.Destination}`;
-        visaInfo[key] = {
-          status: row.Requirement,
-          guidance: row.Guidance,
-          link: row.ETA_Link
-        };
-      });
+  const data = rows.map(row => {
+    const columns = row.split(',');
+    const passport = columns[0]?.trim();
+    const destination = columns[1]?.trim();
+    const requirement = columns[2]?.trim();
+    const guidance = columns.slice(3).join(',').trim(); // capture guidance with potential commas
 
-      const countries = [...new Set(data.flatMap(r => [r.Passport, r.Destination]))].sort();
-      const nationalitySelect = document.getElementById('nationality');
-      const destinationSelect = document.getElementById('destination');
+    return {
+      passport,
+      destination,
+      requirement,
+      guidance
+    };
+  });
 
-      countries.forEach(c => {
-        nationalitySelect.appendChild(new Option(c, c));
-        destinationSelect.appendChild(new Option(c, c));
-      });
-    }
+  return data;
+}
+
+async function populateDropdowns() {
+  const data = await fetchVisaData();
+  const passports = [...new Set(data.map(entry => entry.passport))].sort();
+  const destinations = [...new Set(data.map(entry => entry.destination))].sort();
+
+  const passportSelect = document.getElementById("passport");
+  const destinationSelect = document.getElementById("destination");
+
+  passports.forEach(passport => {
+    const option = document.createElement("option");
+    option.value = passport;
+    option.text = passport;
+    passportSelect.appendChild(option);
+  });
+
+  destinations.forEach(destination => {
+    const option = document.createElement("option");
+    option.value = destination;
+    option.text = destination;
+    destinationSelect.appendChild(option);
   });
 }
 
-function checkVisa() {
-  const from = document.getElementById('nationality').value;
-  const to = document.getElementById('destination').value;
-  const key = `${from}-${to}`;
-  const data = visaInfo[key];
-  const div = document.getElementById('visa-result');
-  if (data) {
-    div.innerHTML = `<h3>${from} → ${to}</h3><p><strong>${data.status}</strong></p><p>${data.guidance || ''}</p>` +
-      (data.link ? `<a href="${data.link}" class="link-btn" target="_blank">Apply here</a>` : '');
-  } else {
-    div.innerHTML = `<h3>${from} → ${to}</h3><p>⏳ Info coming soon for this pair.</p>`;
+async function checkVisaRequirement() {
+  const passport = document.getElementById("passport").value;
+  const destination = document.getElementById("destination").value;
+  const resultDiv = document.getElementById("result");
+
+  if (!passport || !destination) {
+    resultDiv.innerHTML = "<p>Please select both nationality and destination.</p>";
+    return;
   }
-  div.style.display = 'block';
+
+  const visaData = await fetchVisaData();
+
+  const result = visaData.find(entry =>
+    entry.passport === passport && entry.destination === destination
+  );
+
+  if (result) {
+    resultDiv.innerHTML = `
+      <h3>Visa Requirement: ${result.requirement}</h3>
+      <p>${result.guidance}</p>
+    `;
+  } else {
+    resultDiv.innerHTML = "<p>No visa information available for this route.</p>";
+  }
 }
 
-loadVisaData();
+window.onload = populateDropdowns;
