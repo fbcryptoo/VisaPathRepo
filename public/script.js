@@ -1,6 +1,5 @@
-
 async function fetchVisaData() {
-  const response = await fetch("https://raw.githubusercontent.com/fbcryptoo/VisaPathRepo/main/public/combined_passport_data_with_guidance.csv");
+  const response = await fetch("combined_passport_data_with_guidance.csv");
   const csvText = await response.text();
   const rows = csvText.trim().split('\n');
   const headers = rows[0].split(',');
@@ -54,12 +53,12 @@ function checkVisa() {
   const result = window.visaData.find(e => e.passport === from && e.destination === to);
   if (result) {
     div.innerHTML = `
-      <h3>${from} â†’ ${to}</h3>
+      <h3>${from} → ${to}</h3>
       <p><strong>${result.requirement}</strong></p>
       <p>${result.guidance}</p>
     `;
   } else {
-    div.innerHTML = `<h3>${from} â†’ ${to}</h3><p>â³ Info coming soon for this route.</p>`;
+    div.innerHTML = `<h3>${from} → ${to}</h3><p>⏳ Info coming soon for this route.</p>`;
   }
 }
 
