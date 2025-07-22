@@ -1,43 +1,34 @@
-async function fetchVisaData() {
-  const response = await fetch("combined_passport_data_with_guidance.csv");
-  const csvText = await response.text();
-  const rows = csvText.trim().split('\n');
-  const headers = rows[0].split(',');
+let visaData = [];
 
-  return rows.slice(1).map(row => {
-    const cols = row.split(',');
-    return {
-      passport: cols[0].trim(),
-      destination: cols[1].trim(),
-      requirement: cols[2].trim(),
-      guidance: cols.slice(3).join(',').trim()
-    };
-  });
+async function loadVisaData() {
+  try {
+    const response = await fetch("combined_passport_data_with_guidance.csv");
+    const text = await response.text();
+    const rows = text.split("\n").slice(1); // skip header
+    visaData = rows.map(row => {
+      const [passport, destination, requirement, guidance] = row.split(",");
+      return {
+        passport: passport.trim(),
+        destination: destination.trim(),
+        requirement: requirement.trim(),
+        guidance: guidance?.trim() || ""
+      };
+    });
+    populateDropdowns();
+  } catch (error) {
+    console.error("Error loading visa data:", error);
+  }
 }
 
-async function populateDropdowns() {
-  const data = await fetchVisaData();
-  const passports = [...new Set(data.map(d => d.passport))].sort();
-  const destinations = [...new Set(data.map(d => d.destination))].sort();
+function populateDropdowns() {
+  const nationalities = [...new Set(visaData.map(entry => entry.passport))].sort();
+  const destinations = [...new Set(visaData.map(entry => entry.destination))].sort();
 
-  const natSel = document.getElementById("nationality");
-  const destSel = document.getElementById("destination");
+  const nationalitySelect = document.getElementById("nationality");
+  const destinationSelect = document.getElementById("destination");
 
-  passports.forEach(p => {
-    const opt = document.createElement("option");
-    opt.value = p;
-    opt.text = p;
-    natSel.appendChild(opt);
-  });
-
-  destinations.forEach(d => {
-    const opt = document.createElement("option");
-    opt.value = d;
-    opt.text = d;
-    destSel.appendChild(opt);
-  });
-
-  window.visaData = data;
+  nationalitySelect.innerHTML = nationalities.map(n => `<option value="${n}">${n}</option>`).join("");
+  destinationSelect.innerHTML = destinations.map(d => `<option value="${d}">${d}</option>`).join("");
 }
 
 function checkVisa() {
@@ -50,16 +41,43 @@ function checkVisa() {
     return;
   }
 
-  const result = window.visaData.find(e => e.passport === from && e.destination === to);
+  const result = visaData.find(entry => entry.passport === from && entry.destination === to);
+
   if (result) {
-    div.innerHTML = `
-      <h3>${from} → ${to}</h3>
-      <p><strong>${result.requirement}</strong></p>
-      <p>${result.guidance}</p>
-    `;
+    const type = result.requirement.toLowerCase();
+    const linkMatch = result.guidance.match(/https?:\/\/[^\s,]+/);
+    const link = linkMatch ? linkMatch[0] : null;
+
+    let readableType;
+    if (type.includes("visa-free")) {
+      readableType = "no visa";
+    } else if (type.includes("eta")) {
+      readableType = "an eTA";
+    } else if (type.includes("esta")) {
+      readableType = "an ESTA";
+    } else if (type.includes("e-visa")) {
+      readableType = "an eVisa";
+    } else if (type.includes("required")) {
+      readableType = "a visa";
+    } else {
+      readableType = `a ${type}`;
+    }
+
+    let message = `<h3>${from} → ${to}</h3>`;
+
+    if (readableType === "no visa") {
+      message += `<p>No visa is required for travel from <strong>${from}</strong> to <strong>${to}</strong>.</p>`;
+    } else {
+      message += `<p>You need to apply for <strong>${readableType}</strong> to travel from <strong>${from}</strong> to <strong>${to}</strong>.</p>`;
+      if (link) {
+        message += `<p>Apply here: <a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a></p>`;
+      }
+    }
+
+    div.innerHTML = message;
   } else {
-    div.innerHTML = `<h3>${from} → ${to}</h3><p>⏳ Info coming soon for this route.</p>`;
+    div.innerHTML = `<h3>${from} → ${to}</h3><p>⏳ We're working on visa info for this route.</p>`;
   }
 }
 
-window.onload = populateDropdowns;
+window.onload = loadVisaData;
