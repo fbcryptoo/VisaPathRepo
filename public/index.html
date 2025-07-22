@@ -2,111 +2,175 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VisaPath – Do I Need a Visa?</title>
-  <meta name="description" content="Do I need a visa? Use VisaPath’s smart visa checker to instantly find out visa requirements between any two countries—including e-visas, eTAs, ESTA, and visa-free entry." />
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="description" content="If you're asking yourself 'Do I need a visa?' Use our smart visa checker to instantly find out visa requirements between any two countries—including e-visas, eTAs, ESTA, and visa-free entry." />
+  <title>Do I Need a Visa? | VisaPath</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f9f9f9;
+      color: #333;
+    }.hero {
+  background: url('hero-bg.jpg') center/cover no-repeat;
+  padding: 4rem 1rem;
+  text-align: center;
+  position: relative;
+}
+
+.hero .overlay {
+  background: rgba(255, 255, 255, 0.9);
+  max-width: 700px;
+  margin: auto;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+select, button {
+  padding: 0.7rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #0077ff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #005fcc;
+}
+
+.section {
+  padding: 2rem 1rem;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  padding: 1rem;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card img {
+  max-width: 100%;
+  border-radius: 6px;
+}
+
+.card h3 {
+  margin-top: 0.8rem;
+}
+
+.card p {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: #222;
+  color: white;
+}
+
+  </style>
 </head>
 <body>
-  <header>
-    <h1>VisaPath</h1>
-    <p>Your Global Travel Visa Companion</p>
-    <nav>
-      <ul>
-        <li><a href="#visa-checker">Visa Checker</a></li>
-        <li><a href="#blog">Blog</a></li>
-        <li><a href="#tools">Tools</a></li>
-        <li><a href="#stories">Community</a></li>
-        <li><a href="#about">About</a></li>
-      </ul>
-    </nav>
-  </header>  <section id="hero">
-    <h2>Do I need a visa?</h2>
-    <p>Find out instantly with our smart visa checker – includes e-visa, eTA, ESTA, and visa-free travel rules.</p>
-    <form id="visa-checker-form">
-      <label for="nationality">Select your nationality:</label>
-      <select id="nationality"></select><label for="destination">Select your destination:</label>
-  <select id="destination"></select>
-
-  <button type="button" onclick="checkVisa()">✅ Check Visa Requirement</button>
-</form>
-<div id="visa-result" class="result" style="display: none;"></div>
-
-  </section>  <section id="blog">
-    <h3>Travel & Visa Blog</h3>
-    <ul>
-      <li><a href="/blog/visa-requirements-for-brazilians.html">Visa Requirements for Brazilians in 2025</a></li>
-      <li><a href="/blog/weird-visa-laws.html">5 Weird Visa Laws You Didn’t Know</a></li>
-      <li><a href="/blog/visa-free-destinations-india.html">Visa-Free Destinations for Indian Travelers</a></li>
-    </ul>
-    <a href="/blog">Explore All Articles →</a>
-  </section>  <section id="tools">
-    <h3>Tools & Resources</h3>
-    <ul>
-      <li><a href="/visa-explorer.html">🌍 Visa-Free Explorer (Interactive Map)</a></li>
-      <li><a href="/embassy-directory.html">📍 Embassy & Consulate Directory</a></li>
-      <li><a href="/processing-times.html">⏱ Visa Processing Time Tracker</a></li>
-    </ul>
-  </section>  <section id="stories">
-    <h3>Community Visa Stories</h3>
-    <p>Real experiences from travelers worldwide.</p>
-    <ul>
-      <li>“Denied a Schengen Visa Because of a Minor Mistake”</li>
-      <li>“Crossing from Kenya to Tanzania on Foot”</li>
-      <li><a href="/submit-story.html">Submit Your Story →</a></li>
-    </ul>
-  </section>  <section id="about">
-    <h3>About VisaPath</h3>
-    <p>VisaPath is your trusted guide to navigating global travel regulations. Built by travelers, for travelers.</p>
-    <a href="/about.html">Learn More →</a>
+  <header class="hero">
+    <div class="overlay">
+      <h1>Do I need a visa?</h1>
+      <p>Use our smart visa checker to instantly find out visa requirements between any two countries—including e-visas, eTAs, ESTA, and visa-free entry.</p>
+      <form>
+        <select name="nationality" id="nationality">
+          <option value="">Select your nationality</option>
+          <!-- Populate dynamically -->
+        </select>
+        <select name="destination" id="destination">
+          <option value="">Select your destination</option>
+          <!-- Populate dynamically -->
+        </select>
+        <button type="submit">Check Visa Requirement</button>
+      </form>
+    </div>
+  </header>  <section class="section">
+    <h2>Travel & Visa Blog</h2>
+    <div class="cards">
+      <div class="card">
+        <img src="blog1.jpg" alt="Visa Tips" />
+        <h3>Visa Requirements for Brazilians in 2025</h3>
+        <p>See where Brazilians can travel visa-free and what has changed this year.</p>
+      </div>
+      <div class="card">
+        <img src="blog2.jpg" alt="Weird Laws" />
+        <h3>5 Weird Visa Laws You Didn’t Know</h3>
+        <p>Discover some surprising visa laws that exist around the world.</p>
+      </div>
+      <div class="card">
+        <img src="blog3.jpg" alt="India Travel" />
+        <h3>Visa-Free Destinations for Indians</h3>
+        <p>Explore top countries Indian citizens can visit without a visa.</p>
+      </div>
+    </div>
+  </section>  <section class="section">
+    <h2>Tools & Resources</h2>
+    <div class="cards">
+      <div class="card">
+        <img src="map.jpg" alt="Visa-Free Map" />
+        <h3>Visa-Free Explorer</h3>
+        <p>Interactive world map to discover where you can travel visa-free.</p>
+      </div>
+      <div class="card">
+        <img src="embassy.jpg" alt="Embassy Tool" />
+        <h3>Embassy & Consulate Finder</h3>
+        <p>Quickly locate embassies and consulates worldwide.</p>
+      </div>
+      <div class="card">
+        <img src="tracker.jpg" alt="Processing Time" />
+        <h3>Processing Time Tracker</h3>
+        <p>Check average visa approval times based on real user data.</p>
+      </div>
+    </div>
   </section>  <footer>
-    <p>&copy; 2025 VisaPath. All rights reserved.</p>
-    <a href="/privacy.html">Privacy</a> | <a href="/terms.html">Terms</a>
-  </footer>  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>  <script>
-    let visaInfo = {};
-
-    function loadVisaData() {
-      Papa.parse('combined_passport_data_with_guidance.csv', {
-        header: true,
-        download: true,
-        complete: function(results) {
-          const data = results.data;
-          data.forEach(row => {
-            const key = `${row.Passport}-${row.Destination}`;
-            visaInfo[key] = {
-              status: row.Requirement,
-              guidance: row.Guidance,
-              link: row.ETA_Link
-            };
-          });
-
-          const countries = [...new Set(data.flatMap(r => [r.Passport, r.Destination]))].sort();
-          const nationalitySelect = document.getElementById('nationality');
-          const destinationSelect = document.getElementById('destination');
-
-          countries.forEach(c => {
-            nationalitySelect.appendChild(new Option(c, c));
-            destinationSelect.appendChild(new Option(c, c));
-          });
-        }
-      });
-    }
-
-    function checkVisa() {
-      const from = document.getElementById('nationality').value;
-      const to = document.getElementById('destination').value;
-      const key = `${from}-${to}`;
-      const data = visaInfo[key];
-      const div = document.getElementById('visa-result');
-      if (data) {
-        div.innerHTML = `<h3>${from} → ${to}</h3><p><strong>${data.status}</strong></p><p>${data.guidance || ''}</p>` +
-          (data.link ? `<a href="${data.link}" class="link-btn" target="_blank">Apply here</a>` : '') +
-          `<div class='flight-suggestion'>✈️ <strong>Planning to visit ${to}?</strong> <br> <a href='https://www.skyscanner.com/transport/flights-to-${to.toLowerCase().replace(/ /g, "-")}/' target='_blank'>Search cheap flights to ${to}</a></div>`;
-      } else {
-        div.innerHTML = `<h3>${from} → ${to}</h3><p>⏳ Info coming soon for this pair.</p>`;
-      }
-      div.style.display = 'block';
-    }
-
-    loadVisaData();
-  </script></body>
+    &copy; 2025 VisaPath. All rights reserved.
+  </footer>
+</body>
 </html>
