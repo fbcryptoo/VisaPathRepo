@@ -1,59 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>VisaPath – Do I Need a Visa?</title>
-    <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="VisaPath - Instantly check travel visa requirements between any two countries. Easy, fast, and accurate visa information for global travelers.">
+  <meta name="keywords" content="visa checker, visa requirements, travel visa, e-visa, ESTA, visa free, international travel, travel documents">
+  <meta name="author" content="VisaPath Team">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://isvisaneeded.com/">
+
+  <title>VisaPath – Instantly Check Visa Requirements</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <header>
-        <h1>VisaPath</h1>
-        <nav>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Travel Blog</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <section class="checker">
-            <h2>Do I Need a Visa?</h2>
-            <p>Find out instantly what visa you need to travel between any two countries.</p>
-            <div class="form-group">
-                <label for="nationality">Your nationality:</label>
-                <select id="nationality"></select>
-            </div>
-            <div class="form-group">
-                <label for="destination">Destination country:</label>
-                <select id="destination"></select>
-            </div>
-            <button id="checkBtn">Check Visa Requirement</button>
-            <div id="result"></div>
-        </section>
-        <section class="blog">
-            <h2>Travel & Visa Blog</h2>
-            <div class="blog-articles">
-                <div class="article-card">
-                    <h3>Visa-Free Countries for 2025</h3>
-                    <p>Discover the top destinations you can visit without a visa.</p>
-                </div>
-                <div class="article-card">
-                    <h3>How to Apply for an e-Visa</h3>
-                    <p>A step-by-step guide to getting your e-visa online.</p>
-                </div>
-                <div class="article-card">
-                    <h3>Travel Tips by Region</h3>
-                    <p>What to know before you go – visa tips by region.</p>
-                </div>
-            </div>
-        </section>
-    </main>
-    <footer>
-        <p>© 2025 VisaPath. All rights reserved.</p>
-    </footer>
-    <script src="script.js"></script>
+  <header>
+    <h1>VisaPath – Do I Need a Visa?</h1>
+    <nav>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#blog">Travel Blog</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="visa-checker">
+      <h2>Check Visa Requirements Instantly</h2>
+      <p>Find out if you need a visa to travel between two countries – including e-visas, ESTA, and traditional visas.</p>
+      
+      <div class="form-container">
+        <label for="fromCountry">Your nationality:</label>
+        <select id="fromCountry"></select>
+
+        <label for="toCountry">Destination country:</label>
+        <select id="toCountry"></select>
+
+        <button id="checkBtn">Check Visa Requirement</button>
+      </div>
+
+      <div id="resultBox" class="result-box"></div>
+    </section>
+
+    <section id="blog">
+      <h2>Travel & Visa Blog</h2>
+      <ul class="blog-links">
+        <li><a href="#">Top Visa-Free Countries to Visit in 2025</a></li>
+        <li><a href="#">ESTA vs. eVisa: What's the Difference?</a></li>
+        <li><a href="#">Embassy Tips: How to Get a Visa Faster</a></li>
+      </ul>
+    </section>
+
+    <section id="about">
+      <h2>About VisaPath</h2>
+      <p>VisaPath helps travelers get accurate and updated visa information instantly. Whether you're planning a vacation or a business trip, our tool simplifies your visa search.</p>
+    </section>
+
+    <section id="contact">
+      <h2>Contact Us</h2>
+      <p>Email: support@visapath.com</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 VisaPath. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
