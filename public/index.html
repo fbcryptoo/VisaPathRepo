@@ -3,58 +3,176 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VisaPath</title>
+  <title>VisaPath - Do I Need a Visa?</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #333;
+    }
+
+    h1 {
+      color: #1e60d1;
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 0 20px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 0.7rem;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      background-color: #1e60d1;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #174fb5;
+    }
+
+    #result {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #fff3cd;
+      border-left: 5px solid #ffecb5;
+      border-radius: 6px;
+      text-align: left;
+      word-break: break-word;
+    }
+
+    a {
+      color: #1e60d1;
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
   <h1>VisaPath</h1>
-  <select id="nationality"></select>
-  <select id="destination"></select>
-  <button onclick="checkVisa()">Check Visa</button>
-  <div id="results"></div>
+  <div class="card">
+    <h2>Do I need a visa?</h2>
+    <p>Use our smart visa checker to instantly find out visa requirements between any two countries—including e-visas, eTAs, ESTA, and visa-free entry.</p>
+
+    <select id="fromCountry"></select>
+    <select id="toCountry"></select>
+    <button onclick="checkVisa()">Check Visa Requirement</button>
+    
+    <div id="result"></div>
+  </div>
 
   <script>
-    let data = {};
+    let visaData = {};
 
-    fetch('combined_passport_data_with_guidance.csv')
-      .then(response => response.text())
-      .then(csv => {
-        const lines = csv.split('\n');
-        const headers = lines[0].split(',');
-        for (let i = 1; i < lines.length; i++) {
-          const cols = lines[i].split(',');
-          const from = cols[0].trim();
-          const to = cols[1].trim();
-          const requirement = cols[2].trim();
-          const guidance = cols[3]?.trim();
-          if (!data[from]) data[from] = {};
-          data[from][to] = { requirement, guidance };
-        }
+    function populateDropdowns(countries) {
+      const fromSelect = document.getElementById("fromCountry");
+      const toSelect = document.getElementById("toCountry");
 
-        // Populate dropdowns
-        const countries = Object.keys(data);
-        const nationalitySelect = document.getElementById('nationality');
-        const destinationSelect = document.getElementById('destination');
-        countries.forEach(c => {
-          nationalitySelect.innerHTML += `<option>${c}</option>`;
-          destinationSelect.innerHTML += `<option>${c}</option>`;
-        });
+      countries.forEach(country => {
+        const opt1 = new Option(country, country);
+        const opt2 = new Option(country, country);
+        fromSelect.add(opt1);
+        toSelect.add(opt2);
       });
+    }
+
+    function parseCSV(text) {
+      const lines = text.trim().split('\n');
+      const headers = lines[0].split(',');
+      const map = {};
+
+      for (let i = 1; i < lines.length; i++) {
+        const row = lines[i].split(',');
+        const from = row[0].trim();
+        const to = row[1].trim();
+        const requirement = row[2].trim().toLowerCase();
+        const guidance = row[3]?.trim();
+
+        if (!map[from]) map[from] = {};
+        map[from][to] = { requirement, guidance };
+      }
+
+      return map;
+    }
 
     function checkVisa() {
-      const from = document.getElementById('nationality').value;
-      const to = document.getElementById('destination').value;
-      const info = data[from]?.[to];
-      const resultDiv = document.getElementById('results');
-      if (info) {
-        resultDiv.innerHTML = `
-          <p><strong>${from} → ${to}</strong></p>
-          <p>Requirement: ${info.requirement}</p>
-          <p>${info.guidance}</p>
-        `;
-      } else {
-        resultDiv.innerHTML = 'No data available.';
+      const from = document.getElementById("fromCountry").value;
+      const to = document.getElementById("toCountry").value;
+      const info = visaData[from]?.[to];
+      const resultDiv = document.getElementById("result");
+
+      if (!info) {
+        resultDiv.innerHTML = `<strong>No visa data available from ${from} to ${to}.</strong>`;
+        return;
       }
+
+      let msg = `<strong>${from} → ${to}</strong><br/><br/>`;
+
+      switch (info.requirement) {
+        case 'visa':
+          msg += `You need a visa to enter ${to}.`;
+          break;
+        case 'visa_free':
+          msg += `No visa required to enter ${to} — it's visa-free.`;
+          break;
+        case 'eta':
+        case 'e-visa':
+        case 'esta':
+          msg += `You need to apply for an <strong>${info.requirement.toUpperCase()}</strong> to travel to ${to}.`;
+          break;
+        default:
+          msg += `Visa requirement: ${info.requirement}`;
+      }
+
+      if (info.guidance && info.guidance.startsWith("http")) {
+        msg += `<br/><br/><a href="${info.guidance}" target="_blank">Apply here</a>`;
+      } else if (info.guidance) {
+        msg += `<br/><br/>${info.guidance}`;
+      }
+
+      resultDiv.innerHTML = msg;
     }
+
+    // Fetch CSV and initialize
+    fetch('combined_passport_data_with_guidance.csv')
+      .then(response => {
+        if (!response.ok) throw new Error("CSV not found");
+        return response.text();
+      })
+      .then(text => {
+        visaData = parseCSV(text);
+        const countries = Object.keys(visaData).sort();
+        populateDropdowns(countries);
+      })
+      .catch(error => {
+        document.getElementById("result").innerHTML = `Error loading data: ${error.message}`;
+      });
   </script>
 </body>
 </html>
