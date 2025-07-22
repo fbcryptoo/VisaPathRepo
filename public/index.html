@@ -2,47 +2,128 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Do I Need a Visa? | VisaPath</title>
-  <meta name="description" content='If you're asking yourself "Do I need a visa?" Use our smart visa checker to instantly find out visa requirements between any two countries—including e-visas, eTAs, ESTA, and visa-free entry.' />
-  <meta name="keywords" content="do I need a visa, visa checker, e-visa, eTA, ESTA, visa-free countries, visa requirements" />
-  <link rel="stylesheet" href="styles.css" />
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script defer src="script.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Do I need a visa? Use our smart visa checker to instantly find visa requirements between any two countries—including e-visas, eTAs, ESTA, and visa-free entry.">
+  <title>VisaPath – Do I Need a Visa?</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f8f9fa;
+      color: #222;
+    }
+
+    header {
+      background: #ffffff;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+
+    header h1 {
+      color: #2166f3;
+      font-size: 2rem;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 540px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p.description {
+      text-align: center;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      color: #555;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: #2166f3;
+      color: white;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #154fd1;
+    }
+
+    #result {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-size: 1.05rem;
+    }
+
+    #result h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+
+    #result p {
+      margin-bottom: 0.5rem;
+    }
+
+    a {
+      color: #2166f3;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
   <header>
-    <h1 class="logo">VisaPath</h1>
+    <h1>VisaPath</h1>
   </header>
 
-  <main>
-    <section class="hero">
-      <h2>Do I need a visa?</h2>
-      <p>
-        Use our smart visa checker to instantly find out visa requirements between any two countries—
-        including e-visas, eTAs, ESTA, and visa-free entry.
-      </p>
-      <div class="checker">
-        <select id="nationality" aria-label="Select nationality"></select>
-        <select id="destination" aria-label="Select destination"></select>
-        <button onclick="checkVisa()">Check Visa Requirement</button>
-        <p id="result"></p>
-      </div>
-    </section>
+  <main class="container">
+    <h2>Do I need a visa?</h2>
+    <p class="description">Use our smart visa checker to instantly find out visa requirements between any two countries—including e-visas, eTAs, ESTA, and visa-free entry.</p>
 
-    <section class="blog-preview">
-      <h3>🌍 Travel & Visa Blog</h3>
-      <ul>
-        <li><a href="#">Visa Requirements for Brazilians in 2025</a></li>
-        <li><a href="#">5 Weird Visa Laws You Didn’t Know</a></li>
-        <li><a href="#">Visa-Free Destinations for Indian Travelers</a></li>
-      </ul>
-      <a class="more-link" href="#">Explore All Articles →</a>
-    </section>
+    <label for="nationality">Select your nationality:</label>
+    <select id="nationality">
+      <option value="">Loading...</option>
+    </select>
+
+    <label for="destination">Select your destination:</label>
+    <select id="destination">
+      <option value="">Loading...</option>
+    </select>
+
+    <button onclick="checkVisa()">Check Visa Requirement</button>
+
+    <div id="result"></div>
   </main>
 
-  <footer>
-    <p>&copy; 2025 VisaPath. All rights reserved.</p>
-  </footer>
+  <script src="script.js"></script>
 </body>
 </html>
