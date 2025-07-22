@@ -1,18 +1,21 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Is Visa Needed? Instantly Check Travel Visa Requirements</title>
-  <meta name="description" content="Do I need a visa to travel? Instantly find out visa requirements between any two countries — accurate, fast, and always up to date." />
-  <meta name="keywords" content="visa requirements, do I need a visa, travel visa checker, visa lookup tool, country visa info" />
-  <meta name="author" content="IsVisaNeeded.com" />  <!-- Open Graph Meta Tags -->  <meta property="og:title" content="Is Visa Needed? Instantly Check Travel Visa Requirements" />
-  <meta property="og:description" content="Find out if you need a visa to travel from any country to any destination. Accurate and instant results." />
-  <meta property="og:image" content="https://isvisaneeded.com/visapath_background.jpg" />
-  <meta property="og:url" content="https://www.isvisaneeded.com" />
-  <meta property="og:type" content="website" />  <!-- Twitter Meta Tags -->  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Is Visa Needed? Instantly Check Travel Visa Requirements" />
-  <meta name="twitter:description" content="Use IsVisaNeeded.com to check visa requirements for all countries. Accurate and updated daily." />
-  <meta name="twitter:image" content="https://isvisaneeded.com/visapath_background.jpg" />  <!-- Analytics (Plausible Example) -->  <script defer data-domain="isvisaneeded.com" src="https://plausible.io/js/script.js"></script>  <style>
+  <title>Do I Need a Visa? | Fast, Accurate Travel Visa Checker</title>
+  <meta name="description" content="Do I need a visa? Instantly find out if your nationality requires a visa to travel anywhere in the world. IsVisaNeeded.com gives fast, accurate travel visa answers.">
+  <meta name="keywords" content="do I need a visa, visa checker, visa requirements, travel visa, travel requirements, country visa info, visa lookup tool, visa rules by nationality, international travel visa info, travel documents">
+  <meta name="author" content="IsVisaNeeded.com">
+  <link rel="canonical" href="https://www.isvisaneeded.com/" />
+  <meta property="og:title" content="Do I Need a Visa? | Travel Visa Checker">
+  <meta property="og:description" content="Find out if you need a visa to travel from one country to another. Fast and accurate results for travelers worldwide.">
+  <meta property="og:url" content="https://www.isvisaneeded.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://www.isvisaneeded.com/og-image.jpg">
+  <meta name="robots" content="index, follow">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <style>
     body {
       margin: 0;
       padding: 0;
@@ -41,12 +44,11 @@
       font-size: 2rem;
     }
 
-    .intro {
+    .seo-paragraph {
       text-align: center;
-      margin-top: 1rem;
-      margin-bottom: 2rem;
-      font-size: 1.1rem;
+      font-size: 1rem;
       color: #444;
+      margin-bottom: 1.5rem;
     }
 
     label {
@@ -121,38 +123,42 @@
       border-radius: 4px;
       text-decoration: none;
     }
-  </style></head>
+  </style>
+</head>
 <body>
   <div class="overlay">
     <div class="container">
-      <h1>🌍 Is Visa Needed? Instantly Check Travel Visa Requirements</h1>
-      <div class="intro">
-        Do I need a visa to travel? Instantly find out visa requirements between any two countries — accurate, fast, and always up to date.
-      </div><label for="nationality">Select your nationality:</label>
-  <select id="nationality"></select>
+      <h1>🌍 Do I Need a Visa? Instantly Check Travel Requirements</h1>
 
-  <label for="destination">Select your destination:</label>
-  <select id="destination"></select>
+      <p class="seo-paragraph">Quickly find out if you need a visa to travel between any two countries. IsVisaNeeded.com helps you answer “do I need a visa” with fast, reliable, and up-to-date travel information.</p>
 
-  <button onclick="checkVisa()">✅ Check Visa Requirement</button>
+      <label for="nationality">Select your nationality:</label>
+      <select id="nationality"></select>
 
-  <div id="visa-result" class="result" style="display: none;"></div>
+      <label for="destination">Select your destination:</label>
+      <select id="destination"></select>
 
-  <div class="affiliate-box">
-    <a href="https://www.booking.com/index.html?aid=your_affiliate_id" target="_blank">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Booking.com_logo.svg/512px-Booking.com_logo.svg.png" alt="Booking.com">
-    </a>
-    <a href="https://www.expedia.com/?affcid=your_affiliate_id" target="_blank">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Expedia_2021.svg/512px-Expedia_2021.svg.png" alt="Expedia">
-    </a>
+      <button onclick="checkVisa()">✅ Check Visa Requirement</button>
+
+      <div id="visa-result" class="result" style="display: none;"></div>
+
+      <div class="affiliate-box">
+        <a href="https://www.booking.com/index.html?aid=your_affiliate_id" target="_blank">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Booking.com_logo.svg/512px-Booking.com_logo.svg.png" alt="Booking.com">
+        </a>
+        <a href="https://www.expedia.com/?affcid=your_affiliate_id" target="_blank">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Expedia_2021.svg/512px-Expedia_2021.svg.png" alt="Expedia">
+        </a>
+      </div>
+
+      <div class="footer">
+        ✨ Submit visa updates or corrections <a href="#">here</a> ✨
+      </div>
+    </div>
   </div>
 
-  <div class="footer">
-    ✨ Submit visa updates or corrections <a href="#">here</a> ✨
-  </div>
-</div>
-
-  </div>  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>  <script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script>
     let visaInfo = {};
 
     function loadVisaData() {
@@ -199,5 +205,6 @@
     }
 
     loadVisaData();
-  </script></body>
+  </script>
+</body>
 </html>
