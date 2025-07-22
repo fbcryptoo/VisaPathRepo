@@ -3,34 +3,58 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Do I need a visa? Use our smart visa checker to instantly find visa requirements between any two countries—including e-visas, eTAs, ESTA, and visa-free entry.">
-  <title>VisaPath – Do I Need a Visa?</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f8f9fa;
-      color: #222;
-    }
+  <title>VisaPath</title>
+</head>
+<body>
+  <h1>VisaPath</h1>
+  <select id="nationality"></select>
+  <select id="destination"></select>
+  <button onclick="checkVisa()">Check Visa</button>
+  <div id="results"></div>
 
-    header {
-      background: #ffffff;
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      text-align: center;
-    }
+  <script>
+    let data = {};
 
-    header h1 {
-      color: #2166f3;
-      font-size: 2rem;
-      margin: 0;
-    }
+    fetch('combined_passport_data_with_guidance.csv')
+      .then(response => response.text())
+      .then(csv => {
+        const lines = csv.split('\n');
+        const headers = lines[0].split(',');
+        for (let i = 1; i < lines.length; i++) {
+          const cols = lines[i].split(',');
+          const from = cols[0].trim();
+          const to = cols[1].trim();
+          const requirement = cols[2].trim();
+          const guidance = cols[3]?.trim();
+          if (!data[from]) data[from] = {};
+          data[from][to] = { requirement, guidance };
+        }
 
-    .container {
-      max-width: 540px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background: white;
-      border-radius: 12px;
+        // Populate dropdowns
+        const countries = Object.keys(data);
+        const nationalitySelect = document.getElementById('nationality');
+        const destinationSelect = document.getElementById('destination');
+        countries.forEach(c => {
+          nationalitySelect.innerHTML += `<option>${c}</option>`;
+          destinationSelect.innerHTML += `<option>${c}</option>`;
+        });
+      });
+
+    function checkVisa() {
+      const from = document.getElementById('nationality').value;
+      const to = document.getElementById('destination').value;
+      const info = data[from]?.[to];
+      const resultDiv = document.getElementById('results');
+      if (info) {
+        resultDiv.innerHTML = `
+          <p><strong>${from} → ${to}</strong></p>
+          <p>Requirement: ${info.requirement}</p>
+          <p>${info.guidance}</p>
+        `;
+      } else {
+        resultDiv.innerHTML = 'No data available.';
+      }
+    }
+  </script>
+</body>
+</html>
