@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VisaPath - Do I Need a Visa?</title>
+    <link rel="stylesheet" href="style.css" />
+    <meta name="description" content="Do I need a visa? VisaPath helps travelers check visa requirements quickly, including e-visa, eTA, ESTA, and embassy links." />
+    <meta name="keywords" content="do I need a visa, visa checker, visa requirements, e-visa, eTA, ESTA, travel visa, VisaPath" />
+    <meta name="author" content="VisaPath" />
+</head>
+<body>
+    <header>
+        <h1>VisaPath</h1>
+        <p>Your Smart Visa Checker</p>
+    </header>
+
+    <main>
+        <section class="checker">
+            <h2>Check Visa Requirements</h2>
+            <label for="from">Passport Country:</label>
+            <select id="from"></select>
+
+            <label for="to">Destination Country:</label>
+            <select id="to"></select>
+
+            <button onclick="checkVisa()">Check</button>
+            <div id="result"></div>
+        </section>
+
+        <section class="blog">
+            <h2>Travel Insights</h2>
+            <article>
+                <h3>Strangest Visa Rules Ever</h3>
+                <p>Discover unusual visa stories from around the world.</p>
+            </article>
+            <article>
+                <h3>Top 10 Visa-Free Destinations</h3>
+                <p>Explore where your passport can take you freely.</p>
+            </article>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 VisaPath</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
