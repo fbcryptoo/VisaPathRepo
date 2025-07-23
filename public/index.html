@@ -1,50 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VisaPath - Do I Need a Visa?</title>
-    <link rel="stylesheet" href="style.css" />
-    <meta name="description" content="Do I need a visa? VisaPath helps travelers check visa requirements quickly, including e-visa, eTA, ESTA, and embassy links." />
-    <meta name="keywords" content="do I need a visa, visa checker, visa requirements, e-visa, eTA, ESTA, travel visa, VisaPath" />
-    <meta name="author" content="VisaPath" />
-</head>
-<body>
-    <header>
-        <h1>VisaPath</h1>
-        <p>Your Smart Visa Checker</p>
-    </header>
+<!-- TRUNCATED: The top part of your index.html remains unchanged -->
 
-    <main>
-        <section class="checker">
-            <h2>Check Visa Requirements</h2>
-            <label for="from">Passport Country:</label>
-            <select id="from"></select>
+<!-- Add this to your existing HTML just before </body> -->
+<script>
+    const passportOptions = {{passport_json}};
+    const destinationOptions = {{destination_json}};
 
-            <label for="to">Destination Country:</label>
-            <select id="to"></select>
+    document.addEventListener("DOMContentLoaded", () => {
+        const passportSelect = document.querySelector("select[name='passport']");
+        const destinationSelect = document.querySelector("select[name='destination']");
+        const resultBox = document.createElement('div');
+        resultBox.className = "mt-8 p-6 rounded-xl bg-white border border-gray-200 text-lg text-gray-800 shadow-md";
+        document.querySelector(".glass-effect").appendChild(resultBox);
 
-            <button onclick="checkVisa()">Check</button>
-            <div id="result"></div>
-        </section>
+        function populateSelect(selectElement, options) {
+            selectElement.innerHTML = '';
+            options.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country;
+                option.textContent = country;
+                selectElement.appendChild(option);
+            });
+        }
 
-        <section class="blog">
-            <h2>Travel Insights</h2>
-            <article>
-                <h3>Strangest Visa Rules Ever</h3>
-                <p>Discover unusual visa stories from around the world.</p>
-            </article>
-            <article>
-                <h3>Top 10 Visa-Free Destinations</h3>
-                <p>Explore where your passport can take you freely.</p>
-            </article>
-        </section>
-    </main>
+        // Populate and default selects
+        populateSelect(passportSelect, passportOptions);
+        populateSelect(destinationSelect, destinationOptions);
+        passportSelect.value = passportOptions[0];
+        destinationSelect.value = destinationOptions[0];
 
-    <footer>
-        <p>&copy; 2025 VisaPath</p>
-    </footer>
+        document.querySelector("button").addEventListener("click", () => {
+            const passport = passportSelect.value;
+            const destination = destinationSelect.value;
 
-    <script src="script.js"></script>
-</body>
-</html>
+            fetch("combined_passport_data_with_guidance.csv")
+                .then(res => res.text())
+                .then(csv => {
+                    const rows = csv.trim().split("\n").slice(1);
+                    const result = rows
+                        .map(row => row.split(","))
+                        .find(r => r[0] === passport && r[1] === destination);
+
+                    if (result) {
+                        const [,, requirement, link, guidance] = result;
+                        let msg = '';
+
+                        if (requirement.toLowerCase().includes("visa required")) {
+                            msg += `You need a visa to travel to ${destination}. `;
+                            if (link) msg += `<a href="${link}" target="_blank" class="text-blue-600 underline">Get more info here</a>. `;
+                        } else if (requirement.toLowerCase().includes("e-visa") || requirement.toLowerCase().includes("eta") || requirement.toLowerCase().includes("esta")) {
+                            msg += `You can apply online for an ${requirement.toUpperCase()} to travel to ${destination}. `;
+                            if (link) msg += `<a href="${link}" target="_blank" class="text-blue-600 underline">Apply here</a>. `;
+                        } else {
+                            msg += `You ${requirement.toLowerCase()} to travel to ${destination}.`;
+                        }
+
+                        if (guidance && guidance !== "nan") {
+                            msg += ` <br><br><strong>Note:</strong> ${guidance}`;
+                        }
+
+                        resultBox.innerHTML = msg;
+                    } else {
+                        resultBox.innerHTML = `No visa data available for ${passport} to ${destination}.`;
+                    }
+                });
+        });
+    });
+                              </script>
