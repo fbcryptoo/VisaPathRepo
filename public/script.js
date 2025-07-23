@@ -1,65 +1,71 @@
-Papa.parse("combined_passport_data_with_guidance.csv", {
-    download: true,
-    header: true,
-    complete: function(results) {
-        const data = results.data;
-        populateDropdowns(data);
-        setupVisaChecker(data);
-    }
-});
+const passportSelect = document.getElementById('passport');
+const destinationSelect = document.getElementById('destination');
+const checkBtn = document.getElementById('checkBtn');
+const resultBox = document.getElementById('result');
 
-function populateDropdowns(data) {
-    const nationalitySelect = document.getElementById("nationality");
-    const destinationSelect = document.getElementById("destination");
-    const nationalities = [...new Set(data.map(item => item.Nationality))].sort();
-    const destinations = [...new Set(data.map(item => item.Destination))].sort();
+// Load CSV and populate dropdowns
+fetch('combined_passport_data_with_guidance (2) (1).csv')
+  .then(response => response.text())
+  .then(data => {
+    const rows = data.split('\n').slice(1);
+    const passports = new Set();
+    const destinations = new Set();
 
-    nationalities.forEach(nationality => {
-        const option = document.createElement("option");
-        option.value = nationality;
-        option.textContent = nationality;
-        nationalitySelect.appendChild(option);
+    rows.forEach(row => {
+      const cols = row.split(',');
+      passports.add(cols[0]?.trim());
+      destinations.add(cols[1]?.trim());
     });
 
-    destinations.forEach(destination => {
-        const option = document.createElement("option");
-        option.value = destination;
-        option.textContent = destination;
-        destinationSelect.appendChild(option);
+    [...passports].sort().forEach(country => {
+      const opt = document.createElement('option');
+      opt.value = country;
+      opt.textContent = country;
+      passportSelect.appendChild(opt);
     });
-}
 
-function setupVisaChecker(data) {
-    const checkButton = document.getElementById("check-visa");
-    const resultDiv = document.getElementById("result");
+    [...destinations].sort().forEach(country => {
+      const opt = document.createElement('option');
+      opt.value = country;
+      opt.textContent = country;
+      destinationSelect.appendChild(opt);
+    });
+  });
 
-    checkButton.addEventListener("click", () => {
-        const nationality = document.getElementById("nationality").value;
-        const destination = document.getDest;
-        if (!nationality || !destination) {
-            resultDiv.innerHTML = "Yo, pick your nationality and destination first!";
-            resultDiv.classList.add("show");
-            return;
+checkBtn.addEventListener('click', () => {
+  const passport = passportSelect.value;
+  const destination = destinationSelect.value;
+
+  fetch('combined_passport_data_with_guidance (2) (1).csv')
+    .then(res => res.text())
+    .then(data => {
+      const rows = data.split('\n').slice(1);
+      const match = rows.find(row => {
+        const [p, d] = row.split(',');
+        return p.trim() === passport && d.trim() === destination;
+      });
+
+      if (match) {
+        const cols = match.split(',');
+        const requirement = cols[2]?.trim();
+        const link = cols[3]?.trim();
+        const guidance = cols[4]?.trim();
+
+        let message = `<strong>You need a visa to travel to ${destination}</strong><br>${guidance || ''}`;
+
+        if (/e-visa|ESTA|eTA/i.test(requirement)) {
+          message = `<strong>You need to apply for an ${requirement.toUpperCase()}</strong><br>`;
         }
 
-        resultDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Hang tight, checking...';
-        resultDiv.classList.add("show");
+        if (link && link !== 'NaN') {
+          message += `<br><a href="${link}" target="_blank" style="color: #d97706; text-decoration: underline;">Apply here</a>`;
+        }
 
-        setTimeout(() => {
-            const visaInfo = data.find(item => 
-                item.Nationality === nationality && item.Destination === destination
-            );
-
-            if (visaInfo) {
-                let message = visaInfo.VisaRequirement === "Visa-free" 
-                    ? `You’re good to go to ${destination} visa-free for ${visaInfo.AllowedStay || "N/A"}!` 
-                    : `You’ll need a ${visaInfo.VisaRequirement} for ${destination}.`;
-                if (visaInfo.SpecialNotes) message += ` <strong>Heads up:</strong> ${visaInfo.SpecialNotes}`;
-                message += ` <a href="${visaInfo.ApplicationLink || `https://www.google.com/search?q=visa+${destination}`}" target="_blank">Get it here</a>`;
-                resultDiv.innerHTML = message;
-            } else {
-                resultDiv.innerHTML = "No info for this trip, fam. Try again.";
-            }
-        }, 1000);
+        resultBox.innerHTML = message;
+        resultBox.classList.remove('hidden');
+      } else {
+        resultBox.innerHTML = `We couldn't find visa data for this route.`;
+        resultBox.classList.remove('hidden');
+      }
     });
-}
+});
